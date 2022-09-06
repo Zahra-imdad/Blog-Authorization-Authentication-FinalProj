@@ -30,15 +30,7 @@ app.use(express.static(path.join(__dirname, "public")));
   app.use('/blog',blogRoute)
   app.use('/register',registerRoute)
   app.use('/login',loginRoute)
-// app.post('/register',registerRoute)
-// app.post('/login',loginRoute)
-// app.use('/blog',blogRoute)
 
-
-// app.post('/blog',(req,res,next)=>{
-//     console.log(req.body)
-//     res.send("CHAL GAYA")
-// })
 
 mongoose.connect('mongodb://localhost/fakeusers').then(()=>{
     app.listen(3000,()=>{
