@@ -6,11 +6,5 @@ const addBlogValidation = joi.object({
     authorDetail: joi.allow,
 });  
 
-const updateBlogValidation = joi.object({
-    id: joi.required(),
-    title: joi.string().max(20),
-    content: joi.string().max(2750),
-});
 
 exports.addBlogValidation = addBlogValidation;
-exports.updateBlogValidation = updateBlogValidation;

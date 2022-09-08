@@ -1,5 +1,5 @@
 const Blog = require('../model/blogSchema')
-const { addBlogValidation , updateBlogValidation} = require('../validations/blogValidations'); 
+const { addBlogValidation} = require('../validations/blogValidations'); 
 
 const getAllBlogs = async (req,res,next)=>{
     try{
@@ -34,6 +34,12 @@ const specificBlog = async (req,res,next)=>{
   }
 
   const addBlog = async (req, res, next) => {
+    const errors = addBlogValidation.validate(req.body , {abortEarly : false})
+    if (errors.error){
+        const allErrors = errors.error.details.map(err => err.message);
+        next({ status : 500 , message : allErrors});
+        return;
+    }
     const { title, content,tags } = req.body;
      console.log(req.body);
      id = req.user.id
