@@ -6,9 +6,7 @@ const { registerValidation, loginValidation } = require('../validations/AuthVali
 
 
 const register = async (req, res, next) => {
-    console.log("CHALO")
     const errors = registerValidation.validate(req.body, { abortEarly: false })
-    console.log("ERROR se phele")
     if (errors.error) {
         
         const allErrors = errors.error.details.map(err => err.message);
@@ -18,7 +16,6 @@ const register = async (req, res, next) => {
     }
     const {username , email , password} = req.body;
     console.log(req.body)
-    console.log("HERE")
     let emailRegistered = await User.findOne({ email });
     if (emailRegistered) {
         return res.status(400).send('User Exists.');
