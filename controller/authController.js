@@ -5,13 +5,8 @@ const jwt = require('jsonwebtoken');
 const { registerValidation, loginValidation } = require('../validations/AuthValidation');
 const { json } = require('body-parser');
 
-const register = async (req, res, next) => {
-    const {username , email , password} = req.body;
-    console.log(req.body)
-    let emailRegistered = await User.findOne({ email });
-    if (emailRegistered) {
-        return res.status(400).send('User Exists.');
-    }
+const register = async (req, res, next) => {  
+
     const encPassword = bcryptjs.hashSync(password , 15);
     try {
         const user = await User.create({ username, email, password : encPassword });
