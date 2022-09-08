@@ -2,18 +2,30 @@ const User = require('../model/userSchema');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { loginValidation } = require('../validations/AuthValidation');
+const { registerValidation, loginValidation } = require('../validations/AuthValidation');
 
 
-const register = async (req, res, next) => {  
+const register = async (req, res, next) => {
+    console.log("CHALO")
+    const errors = registerValidation.validate(req.body, { abortEarly: false })
+    console.log("ERROR se phele")
+    if (errors.error) {
+        
+        const allErrors = errors.error.details.map(err => err.message);
+        console.log(allErrors)
+        next({ status: 500, message: allErrors });
+        return;
+    }
     const {username , email , password} = req.body;
     console.log(req.body)
+    console.log("HERE")
     let emailRegistered = await User.findOne({ email });
     if (emailRegistered) {
         return res.status(400).send('User Exists.');
     }
     const encPassword = bcryptjs.hashSync(password , 15);
     try {
+        console.log(username)
         const user = await User.create({ username, email, password : encPassword });
         res.status(201).json({ message: 'User Registered' ,user });
     }

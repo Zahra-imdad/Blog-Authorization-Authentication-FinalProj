@@ -1,7 +1,7 @@
 const joi = require('joi');
 
 const registerValidation = joi.object({
-    name: joi.string().required(),
+    username: joi.string().required(),
     email: joi.string().required(),
     password: joi.required(),
 });

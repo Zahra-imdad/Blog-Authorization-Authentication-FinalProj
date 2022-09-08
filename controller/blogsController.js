@@ -1,8 +1,9 @@
 const Blog = require('../model/blogSchema')
+const { addBlogValidation} = require('../validations/blogValidations'); 
 
 const getAllBlogs = async (req,res,next)=>{
     try{
-        const blogPosts = await Blog.find({}).populate("authorDetail","-email -password")
+        const blogPosts = await Blog.find({}).populate("authorDetail","-email -password").populate("comments.userId","username")
         res.json({ blogPosts });
     }catch(err){
         next({status:500,message:err.message})
@@ -14,7 +15,6 @@ const currentUserBlogs = async (req,res,next)=>{
     const id = req.user.id
     console.log(id)
     try{
-      
         const blogPosts = await Blog.find({authorDetail: id}).populate("authorDetail","-email -password")
         res.json({ blogPosts });
     }catch(err){
@@ -25,7 +25,7 @@ const currentUserBlogs = async (req,res,next)=>{
 const specificBlog = async (req,res,next)=>{
     try{
         const {id} =req.params
-        const blogPosts = await Blog.find({_id: id}).populate("authorDetail","-email -password")
+        const blogPosts = await Blog.find({_id: id}).populate("authorDetail","-email -password").populate("comments.userId","username")
         res.json({ blogPosts });
     }catch(err){
         next({status:500,message:err.message})
@@ -33,6 +33,13 @@ const specificBlog = async (req,res,next)=>{
   }
 
   const addBlog = async (req, res, next) => {
+    const errors = addBlogValidation.validate(req.body , {abortEarly : false})
+    if (errors.error){
+        const allErrors = errors.error.details.map(err => err.message);
+        console.log(allErrors)
+        next({ status : 500 , message : allErrors});
+        return;
+    }
     const { title, content,tags } = req.body;
      console.log(req.body);
      id = req.user.id
