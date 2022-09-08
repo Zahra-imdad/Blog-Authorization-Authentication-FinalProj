@@ -23,6 +23,10 @@ const corsOption = {
   }
 app.use(cors(corsOption))
 
+app.use(express.static(path.join(__dirname, "public")));
+
+
+
   app.use('/blog',blogRoute)
   app.use('/register',registerRoute)
   app.use('/login',loginRoute)

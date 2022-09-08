@@ -6,12 +6,6 @@ const { registerValidation, loginValidation } = require('../validations/AuthVali
 const { json } = require('body-parser');
 
 const register = async (req, res, next) => {
-    const errors = registerValidation.validate(req.body, { abortEarly: false })
-    if (errors.error) {
-        const allErrors = errors.error.details.map(err => err.message);
-        next({ status: 500, message: allErrors });
-        return;
-    }
     const {username , email , password} = req.body;
     console.log(req.body)
     let emailRegistered = await User.findOne({ email });
@@ -45,7 +39,6 @@ const login = async (req, res, next) => {
         const dbPass = user.password;
         const isSamePassword = await bcryptjs.compare(password , dbPass);
         if (isSamePassword) {
-            //const jsonPayLoad = {username:user.username, email:user.email , id:user._id}
             const JsonPayLoad = { id : user._id , username : user.username, email : user.email };
             console.log(JsonPayLoad)
             const token = jwt.sign(JsonPayLoad, process.env.SECRET_KEY ,{ expiresIn : '3d'});

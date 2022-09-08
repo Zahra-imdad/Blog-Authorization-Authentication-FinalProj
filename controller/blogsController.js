@@ -11,7 +11,8 @@ const getAllBlogs = async (req,res,next)=>{
 };
 
 const currentUserBlogs = async (req,res,next)=>{
-    const {id} = req.params
+
+    const id = req.user.id
     console.log(id)
     try{
       
@@ -33,16 +34,11 @@ const specificBlog = async (req,res,next)=>{
   }
 
   const addBlog = async (req, res, next) => {
-    const errors = addBlogValidation.validate(req.body , {abortEarly : false})
-    if (errors.error){
-        const allErrors = errors.error.details.map(err => err.message);
-        next({ status : 500 , message : allErrors});
-        return;
-    }
-    const { title, content,authorDetail } = req.body;
+    const { title, content,tags } = req.body;
      console.log(req.body);
+     id = req.user.id
     try {
-      const blogPost = await Blog.create({ title, content, authorDetail:authorDetail });
+      const blogPost = await Blog.create({id, title, content,tags, authorDetail:id });
       console.log(blogPost);
       console.log("username",blogPost.authorDetail.username);
       res.json({ blogPost });
@@ -76,7 +72,7 @@ const specificBlog = async (req,res,next)=>{
       return next({status:404, message:"Id missing"})
     }
     try{
-      await Blog.findByIdAndUpdate( id , {$set: {title: req.body.title, content: req.body.content}});
+      await Blog.findByIdAndUpdate( id , {$set: {title: req.body.title, content: req.body.content,tags:req.body.tags}});
       res.json({message:"Updated : "+id})
     }catch(e){
       next({status:500,message:e.message})
