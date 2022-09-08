@@ -2,11 +2,16 @@ const User = require('../model/userSchema');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { registerValidation, loginValidation } = require('../validations/AuthValidation');
-const { json } = require('body-parser');
+const { loginValidation } = require('../validations/AuthValidation');
+
 
 const register = async (req, res, next) => {  
-
+    const {username , email , password} = req.body;
+    console.log(req.body)
+    let emailRegistered = await User.findOne({ email });
+    if (emailRegistered) {
+        return res.status(400).send('User Exists.');
+    }
     const encPassword = bcryptjs.hashSync(password , 15);
     try {
         const user = await User.create({ username, email, password : encPassword });

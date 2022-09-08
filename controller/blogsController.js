@@ -1,5 +1,4 @@
 const Blog = require('../model/blogSchema')
-const { addBlogValidation} = require('../validations/blogValidations'); 
 
 const getAllBlogs = async (req,res,next)=>{
     try{

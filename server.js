@@ -6,15 +6,13 @@ const router = express.Router();
 const bodyParser = require('body-parser')
 const jwt = require('jsonwebtoken')
 const cors = require('cors')
-const cookieParser = require('cookie-parser')
 const registerRoute = require('./routes/RegisterRoute')
 const loginRoute = require('./routes/loginRoute')
 const blogRoute = require('./routes/blogRoute')
 
-
 app.use(bodyParser.urlencoded({extended:true}))
 app.use(bodyParser.json())
-app.use(cookieParser())
+
 
 const PORT = process.env.PORT
 const corsOption = {
@@ -23,11 +21,23 @@ const corsOption = {
   }
 app.use(cors(corsOption))
 
-app.use(express.static(path.join(__dirname, "public")));
 
+const authMiddleWare = (req , res , next) => {
+  const secretKey = process.env.SECRET_KEY;
+  const token = req.header('Authorization') || '';
+  if (!token) {
+      return res.status(401).json({ message: 'Unauthorized access' });
+  }
+  const decode = jwt.decode(token, secretKey);
+  if (!decode) {
+      return res.status(401).json({ message: 'Unauthorized access' });
+  }
+  req.user = decode;
+  console.log("DECODE :",req.user)
+  next();
+}
 
-
-  app.use('/blog',blogRoute)
+  app.use('/blog',authMiddleWare,blogRoute)
   app.use('/register',registerRoute)
   app.use('/login',loginRoute)
 
